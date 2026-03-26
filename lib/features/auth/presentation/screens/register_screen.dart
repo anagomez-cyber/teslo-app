@@ -1,12 +1,31 @@
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  @override
+  void initState() {
+    super.initState();
+    DatadogSdk.instance.rum?.startView("register", "RegisterScreen");
+  }
+
+  @override
+  void dispose() {
+    DatadogSdk.instance.rum?.stopView("register");
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // tu código igual 👇
 
     final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final textStyles = Theme.of(context).textTheme;
@@ -21,7 +40,6 @@ class RegisterScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
                   const SizedBox(height: 40),
 
                   // Header
@@ -74,7 +92,6 @@ class _RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final textStyles = Theme.of(context).textTheme;
 
     return Padding(
@@ -82,33 +99,27 @@ class _RegisterForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-
           Text('Nueva cuenta', style: textStyles.titleMedium),
           const SizedBox(height: 40),
-
           const CustomTextFormField(
             label: 'Nombre completo',
           ),
           const SizedBox(height: 20),
-
           const CustomTextFormField(
             label: 'Correo',
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 20),
-
           const CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
           ),
           const SizedBox(height: 20),
-
           const CustomTextFormField(
             label: 'Repita la contraseña',
             obscureText: true,
           ),
           const SizedBox(height: 30),
-
           SizedBox(
             height: 60,
             child: CustomFilledButton(
@@ -117,9 +128,7 @@ class _RegisterForm extends StatelessWidget {
               onPressed: () {},
             ),
           ),
-
           const SizedBox(height: 30),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -136,7 +145,6 @@ class _RegisterForm extends StatelessWidget {
               )
             ],
           ),
-
           const SizedBox(height: 20),
         ],
       ),

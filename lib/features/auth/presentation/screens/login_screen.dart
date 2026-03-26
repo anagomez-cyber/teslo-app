@@ -1,3 +1,4 @@
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,8 +6,25 @@ import 'package:teslo_shop/features/auth/presentation/providers/auth_provider.da
 import 'package:teslo_shop/features/auth/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    DatadogSdk.instance.rum?.startView("login", "LoginScreen");
+  }
+
+  @override
+  void dispose() {
+    DatadogSdk.instance.rum?.stopView("login");
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +36,12 @@ class LoginScreen extends StatelessWidget {
         body: GeometricalBackground(
           child: SafeArea(
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 80),
-                  // Icon Banner
-                  const Icon(
-                    Icons.production_quantity_limits_rounded,
-                    color: Colors.white,
-                    size: 100,
-                  ),
+                  const Icon(Icons.production_quantity_limits_rounded,
+                      color: Colors.white, size: 100),
                   const SizedBox(height: 80),
-
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -66,6 +77,12 @@ class _LoginForm extends ConsumerWidget {
 
     ref.listen(authProvider, (previous, next) {
       if (next.errorMessage.isEmpty) return;
+
+      DatadogSdk.instance.rum?.addErrorInfo(
+        next.errorMessage,
+        RumErrorSource.source,
+      );
+
       showSnackbar(context, next.errorMessage);
     });
 
@@ -78,7 +95,6 @@ class _LoginForm extends ConsumerWidget {
         children: [
           Text('Login', style: textStyles.titleLarge),
           const SizedBox(height: 50),
-
           CustomTextFormField(
             label: 'Correo',
             keyboardType: TextInputType.emailAddress,
@@ -87,19 +103,16 @@ class _LoginForm extends ConsumerWidget {
                 loginForm.isFormPosted ? loginForm.email.errorMessage : null,
           ),
           const SizedBox(height: 20),
-
           CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
             onChanged: ref.read(loginFormProvider.notifier).onPasswordChanged,
             onFieldSubmitted: (_) =>
                 ref.read(loginFormProvider.notifier).onFormSubmit(),
-            errorMessage: loginForm.isFormPosted
-                ? loginForm.password.errorMessage
-                : null,
+            errorMessage:
+                loginForm.isFormPosted ? loginForm.password.errorMessage : null,
           ),
           const SizedBox(height: 30),
-
           SizedBox(
             height: 60,
             child: CustomFilledButton(
@@ -107,11 +120,17 @@ class _LoginForm extends ConsumerWidget {
               buttonColor: Colors.black,
               onPressed: loginForm.isPosting
                   ? null
-                  : ref.read(loginFormProvider.notifier).onFormSubmit,
+                  : () {
+                      DatadogSdk.instance.rum?.addAction(
+                        RumActionType.tap,
+                        "login_button",
+                      );
+
+                      ref.read(loginFormProvider.notifier).onFormSubmit();
+                    },
             ),
           ),
           const SizedBox(height: 20),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
