@@ -18,20 +18,23 @@ class CustomFilledButton extends StatelessWidget {
 
     const radius = Radius.circular(10);
 
-    return FilledButton(
-      style: FilledButton.styleFrom(
-        backgroundColor: buttonColor,
-        shape: const RoundedRectangleBorder(
+    return Semantics(
+  label: 'loginButton', // 👈 esto ayuda a Maestro
+  child: FilledButton(
+    key: key,
+    style: FilledButton.styleFrom(
+      backgroundColor: buttonColor,
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: radius,
           bottomRight: radius,
           topLeft: radius,
-        )
-      )),
-        
-  
-      onPressed: onPressed, 
-      child: Text(text)
-    );
+        ),
+      ),
+    ),
+    onPressed: onPressed,
+    child: Text(text),
+  ),
+);
   }
 }

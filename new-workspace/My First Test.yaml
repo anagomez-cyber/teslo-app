@@ -1,0 +1,16 @@
+appId: com.example.teslo_shop_new
+---
+- launchApp
+
+# Espera a que cargue login (MUY IMPORTANTE)
+- assertVisible: "Login"
+
+# Escribir email
+- tapOn: "Correo"
+- inputText: "test1@google.com"
+
+- tapOn: "Contraseña"
+- inputText: "Abc123"
+
+- tapOn:
+    id: "loginButton"
